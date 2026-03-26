@@ -1,59 +1,447 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PHP_Laravel12_Deploy_Operations
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 12 project demonstrating deployment automation using Deploy Operations.
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Project Description
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+PHP_Laravel12_Deploy_Operations is a Laravel 12-based application that demonstrates how to manage and execute deployment-related tasks using the Deploy Operations package.
 
-## Learning Laravel
+It allows developers to create custom operations that run automatically during deployment, such as updating database records, inserting new data, or logging deployment activity. This helps in automating repetitive tasks and maintaining consistency across deployments.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+This project follows best practices for deployment automation and is useful for real-world production environments.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Key Features
 
-### Premium Partners
+- Create custom deploy operations using Artisan commands
+- Execute operations only once (like migrations)
+- Automatically track executed operations in the database
+- Support rollback functionality for operations
+- Add success and failure hooks for better control
+- Organize deployment logic in a clean and structured way
+- Reduce manual work during deployment
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Operations Tracking
 
-## Code of Conduct
+The package automatically creates a table in the database to track executed operations.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+This ensures:
+- Each operation runs only once
+- Operations are not repeated
+- Rollback functionality works correctly
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
+## Technology Stack
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Backend Framework: Laravel 12
+- Language: PHP 8.x
+- Database: MySQL
+- Package Used: dragon-code/laravel-deploy-operations
+- Tools: Composer, Artisan CLI, XAMPP
+
+
+---
+
+
+## Installation Steps
+
+
+---
+
+
+## STEP 1: Create Laravel 12 Project
+
+### Open terminal / CMD and run:
+
+```
+composer create-project laravel/laravel PHP_Laravel12_Deploy_Operations "12.*"
+
+```
+
+### Go inside project:
+
+```
+cd PHP_Laravel12_Deploy_Operations
+
+```
+
+#### Explanation:
+
+Creates a fresh Laravel 12 project using Composer and moves into the project directory to start development.
+
+
+
+
+## STEP 2: Database Setup 
+
+### Update database details:
+
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel12_Deploy_Operations
+DB_USERNAME=root
+DB_PASSWORD=
+
+```
+
+### Create database in MySQL / phpMyAdmin:
+
+```
+Database name: laravel12_Deploy_Operations
+
+```
+
+### Then Run:
+
+```
+php artisan migrate
+
+```
+
+
+#### Explanation:
+
+Connects Laravel to MySQL and creates default tables like users, jobs, etc., using migrations.
+
+
+
+
+
+## STEP 3: Install Deploy Operations Package
+
+### Run:
+
+```
+composer require dragon-code/laravel-deploy-operations
+
+```
+
+### Publish the config:
+
+```
+php artisan vendor:publish --tag=deploy-operations
+
+```
+
+### This creates:
+
+```
+config/operations.php
+
+```
+
+#### Explanation:
+
+Installs the Deploy Operations package and publishes its configuration file to control how operations work.
+
+
+
+
+
+## STEP 4: Create Example Database Table
+
+### We’ll create a simple articles table for demonstration.
+
+```
+php artisan make:migration create_articles_table --create=articles
+
+```
+
+### Edit migration database/migrations/xxxx_create_articles_table.php:
+
+```
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('articles', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->boolean('is_active')->default(false);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('articles');
+    }
+};
+
+```
+
+### Then Run:
+
+```
+php artisan migrate
+
+```
+
+### Seed some dummy articles:
+
+```
+php artisan tinker
+>>> \App\Models\Article::create(['title' => 'Article 1']);
+>>> \App\Models\Article::create(['title' => 'Article 2']);
+>>> exit
+
+```
+
+#### Explanation:
+
+Creates an articles table and inserts sample data to test deploy operations.
+
+
+
+
+## STEP 5: Create Model
+
+### Run:
+
+```
+php artisan make:model Article
+
+```
+
+
+### Model File: app/Models/Article.php
+
+```
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Article extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['title', 'is_active'];
+}
+
+```
+
+#### Explanation:
+
+Creates the Article model to interact with the articles table and allows mass assignment for title and is_active.
+
+
+
+
+
+## STEP 6: Create Deploy Operations
+
+
+#### We will create 3 example operations.
+
+
+### STEP 6.1: Activate Inactive Articles  
+
+#### Run: 
+
+```
+php artisan make:operation activate_articles
+
+```
+
+#### Edit operations/xxxx_activate_articles.php:
+
+```
+<?php
+
+use App\Models\Article;
+use DragonCode\LaravelDeployOperations\Operation;
+
+return new class extends Operation {
+    public function __invoke(): void
+    {
+        Article::query()
+            ->where('is_active', false)
+            ->update(['is_active' => true]);
+
+        echo "✅ All inactive articles are now active.\n";
+    }
+};
+
+```
+
+#### Explanation:
+
+Updates all inactive articles to active when the operation runs.
+
+
+
+
+### STEP 6.2: Create a New Article  
+
+#### Run: 
+
+```
+php artisan make:operation create_new_article
+
+```
+
+#### Edit operations/xxxx_create_new_article.php:
+
+```
+<?php
+
+use App\Models\Article;
+use DragonCode\LaravelDeployOperations\Operation;
+
+return new class extends Operation {
+    public function __invoke(): void
+    {
+        Article::create(['title' => 'New Article via Deploy']);
+        echo "✅ New article created via deploy operation.\n";
+    }
+};
+
+```
+
+#### Explanation:
+
+Creates a new article automatically during deployment.
+
+
+
+
+### STEP 6.3: Log Operation Success  
+
+#### Run: 
+
+```
+php artisan make:operation log_deploy
+
+```
+
+#### Edit operations/xxxx_log_deploy.php:
+
+```
+<?php
+
+use DragonCode\LaravelDeployOperations\Operation;
+use Illuminate\Support\Facades\Log;
+
+return new class extends Operation {
+    public function __invoke(): void
+    {
+        Log::info('Deploy operations executed successfully.');
+        echo "✅ Deploy logged successfully.\n";
+    }
+
+    public function success(): void
+    {
+        echo "🎉 Operation finished successfully.\n";
+    }
+
+    public function failed(): void
+    {
+        echo "❌ Operation failed!\n";
+    }
+};
+
+```
+
+#### Explanation:
+
+Logs deployment activity and shows success or failure messages after execution.
+
+
+
+
+## STEP 7: Run Deploy Operations
+
+### Execute all operations:
+
+```
+php artisan operations
+
+```
+
+
+### Expected Terminal Output (Console)
+
+```
+✅ All inactive articles are now active.
+✅ New article created via deploy operation.
+✅ Deploy logged successfully.
+🎉 Operation finished successfully.
+
+```
+
+#### Explanation:
+
+Runs all pending operations once and records them in the database to prevent re-execution.
+
+
+
+### Expected Output Screenshot:
+
+
+<img src="screenshots/Screenshot 2026-03-26 110053.png" width="900">
+
+
+---
+
+
+## Project Folder Structure:
+
+```
+PHP_Laravel12_Deploy_Operations/
+│
+├── app/
+│   ├── Models/
+│   │   └── Article.php
+│   └── Http/
+│       └── Controllers/
+│
+├── config/
+│   └── operations.php
+│
+├── database/
+│   ├── migrations/
+│   │   ├── 2026_03_25_000000_create_users_table.php
+│   │   ├── 2026_03_25_000001_create_jobs_table.php
+│   │   └── 2026_03_25_000002_create_articles_table.php
+│   └── seeders/
+│
+├── operations/    # Deploy Operations Folder
+│   ├── 2026_03_25_124619_activate_articles.php
+│   ├── 2026_03_25_124640_create_new_article.php
+│   └── 2026_03_25_124655_log_deploy.php
+│
+├── routes/
+│   └── web.php
+│
+├── resources/
+│   └── views/
+│
+├── storage/
+│   └── logs/
+│
+├── bootstrap/
+├── public/
+├── vendor/
+│
+├── .env
+├── artisan
+├── composer.json
+└── README.md
+
+```
