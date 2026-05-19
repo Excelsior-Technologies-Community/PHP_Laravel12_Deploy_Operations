@@ -7,10 +7,28 @@ use App\Models\DeploymentLog;
 
 class DeploymentLogController extends Controller
 {
-    // GET ALL
-    public function index()
+    // GET ALL + FILTER
+    public function index(Request $request)
     {
-        return response()->json(DeploymentLog::latest()->get());
+        $query = DeploymentLog::query();
+
+        if ($request->status) {
+            $query->where(
+                'status',
+                $request->status
+            );
+        }
+
+        if ($request->environment) {
+            $query->where(
+                'environment',
+                $request->environment
+            );
+        }
+
+        return response()->json(
+            $query->latest()->get()
+        );
     }
 
     // STORE
@@ -22,7 +40,9 @@ class DeploymentLogController extends Controller
             'status' => 'required',
         ]);
 
-        $log = DeploymentLog::create($request->all());
+        $log = DeploymentLog::create(
+            $request->all()
+        );
 
         return response()->json([
             'message' => 'Deployment log created successfully',
@@ -40,7 +60,10 @@ class DeploymentLogController extends Controller
     public function update(Request $request, $id)
     {
         $log = DeploymentLog::findOrFail($id);
-        $log->update($request->all());
+
+        $log->update(
+            $request->all()
+        );
 
         return response()->json([
             'message' => 'Updated successfully',
