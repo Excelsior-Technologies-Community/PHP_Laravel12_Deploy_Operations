@@ -7,6 +7,13 @@ use App\Models\DeploymentLog;
 
 class DeploymentLogController extends Controller
 {
+    // WEB VIEW
+    public function webIndex()
+    {
+        $logs = DeploymentLog::latest()->paginate(15);
+        return view('admin.deployments', compact('logs'));
+    }
+
     // GET ALL + FILTER
     public function index(Request $request)
     {

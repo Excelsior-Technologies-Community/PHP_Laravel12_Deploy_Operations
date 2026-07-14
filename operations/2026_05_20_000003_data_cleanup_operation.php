@@ -1,14 +1,14 @@
 <?php
 
-use App\Models\Article;
 use App\Models\AuditTrail;
+use App\Models\DeploymentLog;
 use App\Models\OperationHistory;
 use App\Models\OperationLock;
 use DragonCode\LaravelDeployOperations\Operation;
 
 return new class extends Operation {
 
-    // Conditional: only run on local & production
+    // Only run on production
     public function environment(): array|string
     {
         return ['local', 'production'];
@@ -16,9 +16,8 @@ return new class extends Operation {
 
     public function __invoke(): void
     {
-        $name = 'activate_articles';
+        $name = 'data_cleanup_operation';
 
-        // Operation Locking
         if (OperationLock::isLocked($name)) {
             echo "🔒 Operation '{$name}' is already running. Skipping.\n";
             return;
@@ -27,7 +26,13 @@ return new class extends Operation {
         OperationLock::lock($name);
 
         try {
-            Article::query()->where('is_active', false)->update(['is_active' => true]);
+            // Delete deployment logs older than 30 days
+            $deleted = DeploymentLog::where('created_at', '<', now()->subDays(30))->count();
+            DeploymentLog::where('created_at', '<', now()->subDays(30))->delete();
+
+            // Delete old operation histories older than 60 days
+            $oldOps = OperationHistory::where('created_at', '<', now()->subDays(60))->count();
+            OperationHistory::where('created_at', '<', now()->subDays(60))->delete();
 
             OperationHistory::create([
                 'operation_name' => $name,
@@ -35,21 +40,14 @@ return new class extends Operation {
                 'executed_at'    => now(),
             ]);
 
-            AuditTrail::log($name, 'run', 'success', 'All inactive articles activated.');
+            AuditTrail::log($name, 'run', 'success', "Cleaned {$deleted} old deployment logs, {$oldOps} old operation histories.");
 
-            echo "✅ All inactive articles are now active.\n";
+            echo "✅ Data cleanup: {$deleted} old logs deleted, {$oldOps} old histories deleted.\n";
         } catch (\Exception $e) {
             AuditTrail::log($name, 'run', 'failed', $e->getMessage());
             echo "❌ Failed: " . $e->getMessage() . "\n";
         } finally {
             OperationLock::unlock($name);
         }
-    }
-
-    public function rollback(): void
-    {
-        Article::query()->update(['is_active' => false]);
-        AuditTrail::log('activate_articles', 'rollback', 'success', 'Rolled back: all articles deactivated.');
-        echo "↩️ Rollback: All articles deactivated.\n";
     }
 };

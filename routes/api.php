@@ -1,11 +1,18 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DeploymentLogController;
+use App\Http\Controllers\OperationApiController;
 
-Route::get('/deployments', [DeploymentLogController::class, 'index']);
-Route::post('/deployments', [DeploymentLogController::class, 'store']);
-Route::get('/deployments/{id}', [DeploymentLogController::class, 'show']);
-Route::put('/deployments/{id}', [DeploymentLogController::class, 'update']);
-Route::delete('/deployments/{id}', [DeploymentLogController::class, 'destroy']);
+// Deployment Logs CRUD API
+Route::apiResource('deployments', DeploymentLogController::class);
+
+// Operations API
+Route::prefix('operations')->name('operations.')->group(function () {
+    Route::get('/',          [OperationApiController::class, 'index'])->name('index');
+    Route::get('/status',    [OperationApiController::class, 'status'])->name('status');
+    Route::get('/pipeline',  [OperationApiController::class, 'pipeline'])->name('pipeline');
+    Route::get('/audit',     [OperationApiController::class, 'auditTrail'])->name('audit');
+    Route::post('/run',      [OperationApiController::class, 'run'])->name('run');
+    Route::post('/rollback', [OperationApiController::class, 'rollback'])->name('rollback');
+});
